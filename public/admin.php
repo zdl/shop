@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+define("BIND_MODULE",'backend'); # 绑定后台模块
 // [ 应用入口文件 ]
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
@@ -18,8 +18,5 @@ preg_match('/\/([^\/]+\.[a-z]+)[^\/]*$/',parse_url($_SERVER['SCRIPT_NAME'],PHP_U
 $url = str_replace($match[1],'',$url);
 define('HOST_PATH', $url);
 
-
 // 加载框架引导文件
 require __DIR__ . '/../thinkphp/start.php';
-
-
