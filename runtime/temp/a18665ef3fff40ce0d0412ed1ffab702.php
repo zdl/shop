@@ -1,4 +1,26 @@
-<div class="x-body">
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:61:"D:\php\shop\public/../application/backend\view\admin\add.html";i:1561799744;s:64:"D:\php\shop\public/../application/backend\view\layouts\easy.html";i:1561801639;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;}*/ ?>
+<!DOCTYPE html>
+<html>
+    
+<head>
+    <meta charset="UTF-8">
+    <title>管理后台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <link rel="shortcut icon" href="__PUBLIC__/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__BACKEND_STYLE__/css/font.css">
+    <link rel="stylesheet" href="__BACKEND_STYLE__/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BACKEND_STYLE__/js/xadmin.js"></script>
+</head>
+    <body>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <div class="x-body">
     <form class="layui-form">
         <div class="layui-form-item">
             <label for="username" class="layui-form-label">
@@ -119,3 +141,7 @@
         s.parentNode.insertBefore(hm, s);
     })();
 </script>
+            </div>
+        </div>
+    </body>
+</html>

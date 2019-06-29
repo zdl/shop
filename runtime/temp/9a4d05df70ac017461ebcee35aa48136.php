@@ -1,21 +1,22 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561798507;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561798817;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561798390;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561799802;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561801425;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561799598;}*/ ?>
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>管理后台</title>
-        <meta name="renderer" content="webkit|ie-comp|ie-stand">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-        <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+<head>
+    <meta charset="UTF-8">
+    <title>管理后台</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
 
-        <link rel="shortcut icon" href="__PUBLIC__/favicon.ico" type="image/x-icon" />
-        <link rel="stylesheet" href="__BACKEND_STYLE__/css/font.css">
-        <link rel="stylesheet" href="__BACKEND_STYLE__/css/xadmin.css">
-        <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-        <script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
-        <script type="text/javascript" src="__BACKEND_STYLE__/js/xadmin.js"></script>
-    </head>
+    <link rel="shortcut icon" href="__PUBLIC__/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__BACKEND_STYLE__/css/font.css">
+    <link rel="stylesheet" href="__BACKEND_STYLE__/css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__BACKEND_STYLE__/js/xadmin.js"></script>
+</head>
     <body>
         <!-- 顶部开始 -->
         <div class="container">
@@ -60,7 +61,7 @@
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a _href="member-list.html">
+                        <a href="member-list.html">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>会员列表</cite>
 
@@ -243,7 +244,7 @@
     </div>
     <xblock>
         <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <button class="layui-btn" onclick="x_admin_show('添加用户', './admin-add.html')"><i class="layui-icon"></i>添加</button>
+        <button class="layui-btn" onclick="x_admin_show('添加用户', '<?php echo url('admin/add'); ?>')"><i class="layui-icon"></i>添加</button>
         <span class="x-right" style="line-height:40px">共有数据：88 条</span>
     </xblock>
     <table class="layui-table">
@@ -382,5 +383,3 @@
         </div> 
     </body>
 </html>
-
-
