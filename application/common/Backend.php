@@ -10,9 +10,17 @@ use think\Controller;
  */
 class Backend extends Controller{
     //put your code here
-    
+
     public function __construct() {
         parent::__construct();
+        $this->isLogin();
     }
+    
+    //判断是否登录
+    public function isLogin(){
+        
+    }
+    
+    
     
 }

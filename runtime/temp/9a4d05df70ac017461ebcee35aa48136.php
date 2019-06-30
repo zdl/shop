@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561799802;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561801425;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561799598;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561799802;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561801425;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561860203;}*/ ?>
 <!doctype html>
 <html lang="en">
     
@@ -136,21 +136,15 @@
                         </a>
                     </li >
                     <li>
-                        <a href="admin-role.html">
+                        <a href="<?php echo url('admin/role'); ?>">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>角色管理</cite>
                         </a>
-                    </li >
+                    </li>
                     <li>
-                        <a href="admin-cate.html">
+                        <a href="<?php echo url('admin/node'); ?>">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>权限分类</cite>
-                        </a>
-                    </li >
-                    <li>
-                        <a href="admin-rule.html">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>权限管理</cite>
+                            <cite>节点管理</cite>
                         </a>
                     </li >
                 </ul>
