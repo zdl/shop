@@ -2,7 +2,7 @@
 
 namespace app\backend\controller;
 
-use app\common\Backend;
+use app\common\Controllers;
 use think\Request;
 
 /**
@@ -10,12 +10,15 @@ use think\Request;
  *  公共方法
  * @author 亮亮
  */
-class Publics extends Backend {
-
+class Publics extends Controllers {
+    
     public function index() {
         
     }
-
+    
+    /**
+     * 管理员登录
+     */
     public function login(Request $request) {
         if ($request->param()) {
             $username = $request->param('username');
@@ -27,5 +30,6 @@ class Publics extends Backend {
         }
         return $this->fetch('login');
     }
-
+    
+   
 }
