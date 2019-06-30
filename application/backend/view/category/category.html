@@ -1,0 +1,32 @@
+<div class="flip-scroll">
+    <form action="" method="post">
+        <table class="table table-bordered table-hover">
+            <thead class="">
+                <tr>
+                    <th class="text-center" width="10%">ID</th>
+                    <th class="text-center">分类名称</th>
+                    <th class="text-center" width="20%">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {volist name="list" id="vo"}
+                    {if condition="$vo.status eq 0"}
+                    <tr>
+                        <td align="center" width="10%">{$vo.cat_id}</td>
+                        <td width="10%">{$vo.cat_name}</td>
+                        <td align="center" width="20%">
+                            <a href="{:url('edit',array('cat_id'=>$vo['cat_id']))}" class="btn btn-primary btn-sm shiny">
+                                <i class="fa fa-edit"></i> 编辑
+                            </a>
+                            <a href="{:url('del',array('cat_id'=>$vo['cat_id']))}')" class="btn btn-danger btn-sm shiny">
+                                <i class="fa fa-trash-o"></i> 删除
+                            </a>
+                        </td>
+                    </tr> 
+                    {/if}              
+                {/volist}
+            </tbody>
+        </table>
+        
+    </form>
+</div>

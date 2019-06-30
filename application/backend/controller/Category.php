@@ -8,7 +8,7 @@ use think\Request;
 use app\model\Category as CategoryModel;
 
 class Category extends Controller {
-
+    
     //商品分类展示
     public function lists() {
         $model = new CategoryModel;
@@ -22,20 +22,21 @@ class Category extends Controller {
         //判断访问方式
         if (request()->isGet()) {
             //查询所有商品种类
-            $category = Db::table('category')->where(['parent' => 0])->select();
-            return view('addcategory', ['list' => $category]);
+            $category = Db::table('shop_category')->where(['parent' => 0])->select();
+            $this->view->engine->layout('layouts/easy');
+            return $this->fetch('addcategory', ['list' => $category]);
         }
         //接收提交数据
-        $postData = request()->post();
-        $res = Db::table('category')->where(['name' => $postData['name']])->find();
+        $postData = input('post.');
+        $res = Db::table('shop_category')->where(['name' => $postData['name']])->find();
         if ($res) {
             return $this->error('分类名称重复');
         }
         //插入数据
-        $res = Db::table('category')->insert($postData);
+        $res = Db::table('shop_category')->insert($postData);
         if ($res) {
             //跳转到展示
-            $this->success('分类添加成功', url('category/showcategory'));
+            $this->success('分类添加成功', url('category/lists'));
         } else {
             //失败跳转
             $this->error('添加失败！');
@@ -45,12 +46,12 @@ class Category extends Controller {
     //删除分类
     public function delCategory() {
         $id = request()->get('id');
-        $res = Db::table('category')->where(['parent' => $id])->find();
+        $res = Db::table('shop_category')->where(['parent' => $id])->find();
         //有子分类不允许删除
         if ($res) {
             return $this->error('该分类下有子分类不允许删除！');
         }
-        $res = Db::table('category')->delete(['id' => $id]);
+        $res = Db::table('shop_category')->delete(['id' => $id]);
         if ($res) {
             $this->success('分类删除成功', url('category/showcategory'));
         } else {
@@ -60,27 +61,53 @@ class Category extends Controller {
 
     //修改分类
     public function updateCategory() {
-        //判断访问方式
-        if (request()->isGet()) {
-            $id = request()->get('id');
-            //查询所有商品种类
-            $category = Db::table('category')->where(['id' => $id])->find();
 
+        $id = input('id');
+        //判断访问方式
+        if ($id) {
+            //查询所有商品种类
+            $category = Db::table('shop_category')->where(['id' => $id])->find();
             $parent = array();
             if ($category['parent'] != 0) {
                 //查询所有商品种类
-                $parent = Db::table('category')->where(['parent' => 0])->select();
+                $parent = Db::table('shop_category')->where(['parent' => 0])->select();
             }
-            return view('updcategory', ['list' => $category, 'parent' => $parent]);
+            $this->view->engine->layout('layouts/easy');
+            return view('updatecategory', ['list' => $category, 'parent' => $parent]);
         }
 
         $postData = request()->post();
-        $res = Db::table('category')->update($postData);
+        //dump($postData);die;
+        $res = Db::table('shop_category')->where('id',$postData['id'])->update($postData);
+        // $res = $cate->save($data,['cat_id'=>$data['cat_id']]);
         if ($res) {
-            $this->success('分类修改成功!', url('category/showcategory'));
+            // $this->success('分类修改成功!', url('category/updatecategory'));
         } else {
             $this->error('分类修改失败');
         }
+         
+        // $cate = new CategoryModel;
+        // if(request()->isPost()){
+        //     $data = input('post.');
+        //     // $save=$cate->save($data,['id'=>$data['id']]);
+        //     $save = $cate->save($data,['id'=>$data['id']]);
+        //     if($save !== false){
+        //         $this->success('修改商品类型成功！',url('lists'));
+        //     }else{
+        //         $this->error('修改商品类型失败！');
+        //     }
+        //     return;
+        // }
+        // $cates = $cate->find(input('id'));
+        // $cateres = $cate->getTree();
+        // // dump(input());die;
+        // $this->assign(array(
+        //     'cateres'=>$cateres,
+        //     'cates'=>$cates
+        // ));
+
+        // $this->view->engine->layout('layouts/easy');
+        // return $this->fetch('updatecategory');
     }
 
 }

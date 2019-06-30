@@ -43,4 +43,14 @@ class Admin extends Backend {
         return $this->fetch('add_node');
     }
 
+    //商品分类添加
+    public function add_cate() {
+        return $this->fetch('add_cate');
+    }
+
+    //商品分类列表
+    public function cate_list() {
+        return $this->fetch('cate_list');
+    }
+
 }
