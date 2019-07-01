@@ -1,0 +1,62 @@
+<form class="layui-form" action="{:url('property/addproperty')}" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品类别</label>
+        <div class="layui-input-block">
+            <select name="cid">
+                <option value="">请选择</option>
+                {volist name="list" id="v"}
+                    </optgroup><optgroup label="{$v.name}">
+                        {notempty name="v['son']"}
+                            {$v.name}
+                            {volist name="v['son']" id='vv'}
+                                <option value="{$vv.id}">{$vv.name}</option>
+                            {/volist}
+                        {/notempty}
+                    </optgroup>
+                {/volist}
+
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">商品属性</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" required  lay-verify="required" placeholder="请输入属性名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">属性值</label>
+        <div class="layui-input-block">
+            <input type="text" name="value[]" required  lay-verify="required" placeholder="请输入属性值" autocomplete="off" class="layui-input">
+            <a href="javascript:;"class="layui-btn" id="add">+</a>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script src="__static__/layui.js"></script>
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+</script>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+    $(function () {
+        $("#add").click(function () {
+            var addItem = "<input type=\"text\" name=\"value[]\" required  lay-verify=\"required\" placeholder=\"请输入属性值\" autocomplete=\"off\" class=\"layui-input\">";
+            $(this).prev().before(addItem);
+        })
+    })
+</script>
