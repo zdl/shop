@@ -20,7 +20,7 @@ class Admin extends Model {
     protected $updateTime = 'login_time';
 
     //通过用户名获取用户信息
-    public function ByNameGetInfo($name) {
+    public static function ByNameGetInfo($name=false) {
         
     }
 
@@ -29,7 +29,7 @@ class Admin extends Model {
      * $id 用户Id 用户唯一id 不能为空 
      * 返回对应的数据库 格式为数组
      **/
-    public function ByIdGetInfo($id=false) {
+    public static function ByIdGetInfo($id=false) {
         
     }
 

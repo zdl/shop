@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561799802;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561801425;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561860203;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561973706;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561981278;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561860203;}*/ ?>
 <!doctype html>
 <html lang="en">
     
@@ -218,9 +218,13 @@
                 <div class="x-nav">
                     <span class="layui-breadcrumb">
                         <a href="">首页</a>
-                        <a href="">演示</a>
-                        <a>
-                            <cite>导航元素</cite></a>
+                        <?php if(is_array($breadcrumb) || $breadcrumb instanceof \think\Collection): $i = 0; $__LIST__ = $breadcrumb;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;if(!empty($vo['url'])): ?>
+                                <a href="<?php echo $vo['url']; ?>"><?php echo $vo['name']; ?></a>
+                            <?php else: ?>
+                                <a><cite><?php echo $vo['name']; ?></cite></a>
+                            <?php endif; endforeach; endif; else: echo "" ;endif; ?>
+                      
+                        
                     </span>
                     <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
                         <i class="layui-icon" style="line-height:30px">ဂ</i></a>
@@ -273,7 +277,7 @@
                     <a onclick="member_stop(this, '10001')" href="javascript:;"  title="启用">
                         <i class="layui-icon">&#xe601;</i>
                     </a>
-                    <a title="编辑"  onclick="x_admin_show('编辑', 'admin-edit.html')" href="javascript:;">
+                    <a title="编辑"  onclick="x_admin_show('编辑', '<?php echo url('admin/edit'); ?>')" href="javascript:;">
                         <i class="layui-icon">&#xe642;</i>
                     </a>
                     <a title="删除" onclick="member_del(this, '要删除的id')" href="javascript:;">

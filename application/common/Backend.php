@@ -11,11 +11,16 @@ use app\common\Controllers;
  */
 class Backend extends Controllers {
 
+    public $breadcrumb = [
+        ['name' => '首页', 'url' => '/']
+    ];
+
     /**
      * 构造函数
      */
     public function __construct() {
         parent::__construct();
+        $this->assign('breadcrumb', $this->breadcrumb);
         $this->isLogin();
     }
 
