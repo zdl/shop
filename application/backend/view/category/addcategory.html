@@ -20,13 +20,12 @@
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
     </div>
 </form>
 
 </div>
-<script src="__static__/layui.js"></script>
+
 <script>
     //Demo
     layui.use('form', function(){
@@ -34,13 +33,17 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data){
-            console.log(data);
-            //发异步，把数据提交给php
-            layer.alert("增加成功", {icon: 6}, function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
+            $.post("addCategory", { name: data.field.name, parent: data.field.parent },function(result){
+                      if(result.code){
+                        layer.alert("增加成功", {icon: 6}, function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                        });
+                      }else{
+                          layer.alert(result.msg)
+                      }
             });
             return false;
         });

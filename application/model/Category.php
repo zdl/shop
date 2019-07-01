@@ -15,9 +15,10 @@ class Category extends Model {
     protected $table = 'shop_category';
 
     public function categoryTree(){
-        $list = $this->select();
+        $list = $this->where("parent",0)->paginate(7);
+        return $list;
         //生成Tree树
-        return $this->getTree($list);
+        //return $this->getTree($list);
     }
 
     //生成tree树

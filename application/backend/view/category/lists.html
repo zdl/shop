@@ -4,14 +4,17 @@
         <button class="layui-btn" onclick="x_admin_show('添加商品分类', '{:url(\'category/addCategory\')}')"><i class="layui-icon"></i>添加</button>
         <span class="x-right" style="line-height:40px">共有数据：88 条</span>
     </xblock>
-    <table class="layui-table">
+    <table class="layui-table" >
         <thead>
             <tr>
                 <th>
                     <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+                    ID
                 </th>
-                <th>ID</th>
+                <th>排序</th>
                 <th>分类名称</th>
+                <th>状态&nbsp;&nbsp;(操作)</th>
+                <th>是否显示&nbsp;&nbsp;(操作)</th>
                 <th>操作</th>
         </thead>
         <tbody>
@@ -19,17 +22,44 @@
             <tr>
                 <td>
                     <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
+                    {$vo.id}
                 </td>
-                <td>{$vo.id}</td>
+                <td>{$vo.sort}</td>
                 <td>{$vo.name}</td>
-                <td class="td-manage">
-                    <a onclick="member_stop(this, '10001')" href="javascript:;"  title="启用">
-                        <i class="layui-icon">&#xe601;</i>
+                <td>
+                    {if condition="$vo['status'] == 1"}
+                    <span>已开启</span>&nbsp;&nbsp;
+                    <a onclick="member_stop(this)" tag="{$vo.id}"  href="javascript:;"  title="启用">
+                        <i class="layui-icon">&#x1006;</i>
                     </a>
-                    <a title="编辑"  onclick="x_admin_show('编辑', 'updatecategory.html')" href="{:url('updatecategory',array('id'=>$vo['id']))}">
+                    {else /} 
+                    <span>已停用</span>&nbsp;&nbsp;
+                    <a onclick="member_stop(this)" tag="{$vo.id}"  href="javascript:;"  title="停用">
+                        <i class="layui-icon">&#xe605;</i>
+                    </a>
+                    {/if} 
+                
+                </td>
+                <td>
+                    {if condition="$vo['is_show'] == 1"}
+                    <span>显示</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a onclick="show_stop(this)" tag="{$vo.id}"  href="javascript:;"  title="显示">
+                        <i class="layui-icon">&#x1006;</i>
+                    </a>
+                    {else /} 
+                    <span>不显示</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a onclick="show_stop(this)" tag="{$vo.id}"  href="javascript:;"  title="不显示">
+                        <i class="layui-icon">&#xe605;</i>
+                    </a>
+                    {/if} 
+                    
+                </td>
+                <td class="td-manage">
+
+                    <a title="编辑"  onclick="x_admin_show('编辑', '{:url(\'backend/category/updateCategory\',array(\'id\'=>$vo[\'id\']))}')">
                         <i class="layui-icon">&#xe642;</i>
                     </a>
-                    <a title="删除" onclick="member_del(this, '要删除的id')" href="{:url('delCategory',array('id'=>$vo['id']))}">
+                    <a title="删除" onclick="member_del(this)" tag="{$vo.id}" href="javascript:;">
                         <i class="layui-icon">&#xe640;</i>
                     </a>
                 </td>
@@ -39,12 +69,7 @@
     </table>
     <div class="page">
         <div>
-            <a class="prev" href="">&lt;&lt;</a>
-            <a class="num" href="">1</a>
-            <span class="current">2</span>
-            <a class="num" href="">3</a>
-            <a class="num" href="">489</a>
-            <a class="next" href="">&gt;&gt;</a>
+            {$page}
         </div>
     </div>
 
@@ -62,38 +87,94 @@
         laydate.render({
             elem: '#end' //指定元素
         });
+
     });
 
     /*用户-停用*/
-    function member_stop(obj, id) {
-        layer.confirm('确认要停用吗？', function (index) {
-
+    function member_stop(obj) {
+        layer.confirm('确认要修改状态吗？', function (index) {
+            var id = $(obj).attr("tag")
             if ($(obj).attr('title') == '启用') {
+                $.post("updateStatus", { id :id ,status:0},function(data){
+                    if(data.code){
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '停用')
+                        $(obj).find('i').html('&#xe605;');
 
-                //发异步把用户状态进行更改
-                $(obj).attr('title', '停用')
-                $(obj).find('i').html('&#xe62f;');
-
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!', {icon: 5, time: 1000});
-
+                        $(obj).siblings('span').html('不显示');
+                        layer.msg('已停用!', {icon: 5, time: 1000});
+                    }else{
+                        layer.msg(data.msg, {icon: 5, time: 1000});
+                    }
+                });
             } else {
-                $(obj).attr('title', '启用')
-                $(obj).find('i').html('&#xe601;');
+                $.post("updateStatus", { id :id ,status:1},function(data){
+                    if(data.code){
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '启用')
+                        $(obj).find('i').html('&#x1006;');
 
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!', {icon: 5, time: 1000});
+                        $(obj).siblings('span').html('显示');
+                        layer.msg('已开启', {icon: 5, time: 10000});
+                    }else{
+                        layer.msg(data.msg, {icon: 5, time: 10000});
+                    }
+                });
+            }
+
+        });
+    }
+    
+    /*用户-停用*/
+    function show_stop(obj) {
+        layer.confirm('确认要修改是否显示吗？', function (index) {
+            var id = $(obj).attr("tag")
+            if ($(obj).attr('title') == '显示') {
+                $.post("updateShow", { id :id , is_show:0 },function(data){
+                    if(data.code){
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '不显示')
+                        $(obj).find('i').html('&#xe605;');
+
+                        $(obj).siblings('span').html('已关闭');
+                        layer.msg('已关闭!', {icon: 5, time: 1000});
+                    }else{
+                        layer.msg(data.msg, {icon: 5, time: 1000});
+                    }
+                });
+            } else {
+                $.post("updateShow", { id :id ,is_show:1},function(data){
+                    if(data.code){
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '显示')
+                        $(obj).find('i').html('&#x1006;');
+
+                        $(obj).siblings('span').html('已开启');
+                        layer.msg('已开启!', {icon: 5, time: 1000});
+                    }else{
+                        layer.msg(data.msg, {icon: 5, time: 1000});
+                    }
+                });
             }
 
         });
     }
 
+
     /*用户-删除*/
-    function member_del(obj, id) {
+    function member_del(obj) {
         layer.confirm('确认要删除吗？', function (index) {
+            var id = $(obj).attr("tag")
             //发异步删除数据
-            $(obj).parents("tr").remove();
-            layer.msg('已删除!', {icon: 1, time: 1000});
+            $.post("delCategory", { id :id },function(data){
+                if(data.code){
+                  $(obj).parents("tr").remove();
+                   layer.msg('已删除!', {icon: 1, time: 1000});
+                }else{
+                    layer.alert(data.msg)
+                }
+
+            });
         });
     }
 
