@@ -1,4 +1,4 @@
-<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561973706;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1561981278;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561860203;}*/ ?>
+<?php if (!defined('THINK_PATH')) exit(); /*a:4:{s:63:"D:\php\shop\public/../application/backend\view\admin\index.html";i:1561973706;s:64:"D:\php\shop\public/../application/backend\view\layouts\main.html";i:1562048090;s:64:"D:\php\shop\public/../application/backend\view\layouts\head.html";i:1561801442;s:64:"D:\php\shop\public/../application/backend\view\layouts\menu.html";i:1561981502;}*/ ?>
 <!doctype html>
 <html lang="en">
     
@@ -36,16 +36,15 @@
             </ul>
             <ul class="layui-nav right" lay-filter="">
                 <li class="layui-nav-item">
-                    <a href="javascript:;">admin</a>
+                    <a href="javascript:;"><?php echo $_SESSION['_admin']['name']; ?></a>
                     <dl class="layui-nav-child"> <!-- 二级菜单 -->
                         <dd><a onclick="x_admin_show('个人信息', 'http://www.baidu.com')">个人信息</a></dd>
                         <dd><a onclick="x_admin_show('切换帐号', 'http://www.baidu.com')">切换帐号</a></dd>
-                        <dd><a href="./login.html">退出</a></dd>
+                        <dd><a href="<?php echo url('publics/logout'); ?>">退出</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
             </ul>
-
         </div>
         <!-- 顶部结束 -->
         <!-- 中部开始 -->
@@ -147,6 +146,22 @@
                             <cite>节点管理</cite>
                         </a>
                     </li >
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe726;</i>
+                    <cite>商品管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a href="<?php echo url('category/lists'); ?>">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>分类管理</cite>
+                        </a>
+                    </li >
+  
                 </ul>
             </li>
             <li>
