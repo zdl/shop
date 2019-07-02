@@ -11,12 +11,16 @@ class Category extends Controller {
 
     //商品分类展示
     public function lists() {
+        $breadcrumb =[
+            ['name'=>'分类管理','url'=>'lists'],
+            ['name'=>'分类列表']
+        ];
         $model = new CategoryModel;
         //查询所有商品种类
         $list = $model->order('sort')->paginate(7);
         $page = $list->render();
 
-        return view('lists', ['list' => $list, "page" => $page]);
+        return view('lists', ['list' => $list, "page" => $page,"breadcrumb"=>$breadcrumb]);
     }
 
     //商品分类添加

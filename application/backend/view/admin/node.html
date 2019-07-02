@@ -1,6 +1,6 @@
 <div class="x-body">
     <div class="layui-row">
-        <form class="layui-form layui-col-md12 x-so layui-form-pane">
+<!--        <form class="layui-form layui-col-md12 x-so layui-form-pane">
             <div class="layui-input-inline">
                 <select name="cateid">
                     <option>规则分类</option>
@@ -26,53 +26,51 @@
                 </select>
             </div>
             <input class="layui-input" placeholder="权限名" name="cate_name" >
-            <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon"></i>增加</button>
-        </form>
+            
+        </form>-->
     </div>
     <xblock>
-        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-        <span class="x-right" style="line-height:40px">共有数据：88 条</span>
+<!--        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>-->
+        <button class="layui-btn" onclick="x_admin_show('添加用户', '{:url(\'admin/nodeInfo\')}')"><i class="layui-icon"></i>添加</button>
+        <span class="x-right" style="line-height:40px">共有数据：{$count} 条</span>
     </xblock>
     <table class="layui-table">
         <thead>
             <tr>
-                <th>
+<!--                <th>
                     <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
-                </th>
+                </th>-->
                 <th>ID</th>
                 <th>权限规则</th>
                 <th>权限名称</th>
-                <th>所属分类</th>
+                <th>权限描述</th>
                 <th>操作</th>
         </thead>
         <tbody>
+            {volist name='list' id='node'}
             <tr>
-                <td>
+<!--                <td>
                     <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
-                </td>
-                <td>1</td>
-                <td>admin/user/userlist</td>
-                <td>会员列表</td>
-                <td>会员相关</td>
+                </td>-->
+                <td>{$node.id}</td>
+                <td>{$node.http_path}</td>
+                <td>{$node.name}</td>
+                <th>{$node.description}</th>
                 <td class="td-manage">
-                    <a title="编辑"  onclick="x_admin_show('编辑', 'xxx.html')" href="javascript:;">
+                    <a title="编辑"  onclick="x_admin_show('编辑', '{:url(\'admin/nodeInfo\',array(\'id\'=>$node[\'id\']))}')" href="javascript:;">
                         <i class="layui-icon">&#xe642;</i>
                     </a>
-                    <a title="删除" onclick="member_del(this, '要删除的id')" href="javascript:;">
+                    <a title="删除" onclick="member_del(this)"  tag="{$node['id']}" href="javascript:;">
                         <i class="layui-icon">&#xe640;</i>
                     </a>
                 </td>
             </tr>
+         {/volist}   
         </tbody>
     </table>
     <div class="page">
         <div>
-            <a class="prev" href="">&lt;&lt;</a>
-            <a class="num" href="">1</a>
-            <span class="current">2</span>
-            <a class="num" href="">3</a>
-            <a class="num" href="">489</a>
-            <a class="next" href="">&gt;&gt;</a>
+            {$page}
         </div>
     </div>
 
@@ -94,36 +92,20 @@
         });
     });
 
-    /*用户-停用*/
-    function member_stop(obj, id) {
-        layer.confirm('确认要停用吗？', function (index) {
-
-            if ($(obj).attr('title') == '启用') {
-
-                //发异步把用户状态进行更改
-                $(obj).attr('title', '停用')
-                $(obj).find('i').html('&#xe62f;');
-
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!', {icon: 5, time: 1000});
-
-            } else {
-                $(obj).attr('title', '启用')
-                $(obj).find('i').html('&#xe601;');
-
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!', {icon: 5, time: 1000});
-            }
-
-        });
-    }
-
     /*用户-删除*/
     function member_del(obj, id) {
-        layer.confirm('确认要删除吗？', function (index) {
+       layer.confirm('确认要删除吗？', function (index) {
+            var id = $(obj).attr("tag")
             //发异步删除数据
-            $(obj).parents("tr").remove();
-            layer.msg('已删除!', {icon: 1, time: 1000});
+            $.post("delNode", {id: id}, function (data) {
+                if (data.code) {
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!', {icon: 1, time: 1000});
+                } else {
+                    layer.alert(data.msg)
+                }
+
+            });
         });
     }
 
