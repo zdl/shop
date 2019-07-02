@@ -4,9 +4,11 @@
             <label for="username" class="layui-form-label">
                 <span class="x-red">*</span>登录名
             </label>
+            <input id="user_id" name="user_id" value="{$user['user_id']??''}" type="hidden">
             <div class="layui-input-inline">
-                <input type="text" id="username" name="username" required="" lay-verify="required"
-                       autocomplete="off" class="layui-input">
+                <input type="text" id="username" name="user_name" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input" 
+                       value="{$user['user_name']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>将会成为您唯一的登入名
@@ -18,7 +20,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="phone" name="phone" required="" lay-verify="phone"
-                       autocomplete="off" class="layui-input">
+                       autocomplete="off" class="layui-input" value="{$user['phone']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>将会成为您唯一的登入名
@@ -30,7 +32,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="L_email" name="email" required="" lay-verify="email"
-                       autocomplete="off" class="layui-input">
+                       autocomplete="off" class="layui-input" value="{$user['email']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
@@ -49,7 +51,7 @@
                 <span class="x-red">*</span>密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="pass" required="" lay-verify="pass"
+                <input type="password" id="L_pass" name="user_password" required="" lay-verify="pass"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -69,7 +71,7 @@
             <label for="L_repass" class="layui-form-label">
             </label>
             <button  class="layui-btn" lay-filter="add" lay-submit="">
-                增加
+                确定
             </button>
         </div>
     </form>
@@ -98,12 +100,19 @@
         //监听提交
         form.on('submit(add)', function (data) {
             console.log(data);
-            //发异步，把数据提交给php
-            layer.alert("增加成功", {icon: 6}, function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
+            $.post("/admin.php/admin/store", 
+            { user_name:data.field.user_name, user_id: data.field.user_id,phone:data.field.phone,email:data.field.email,pass:data.field.pass },
+            function(result){
+                
+                layer.alert(result.msg, {icon: 6}, function () {
+                    //刷新父页面
+                    parent.location.reload();
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                });
+ 
             });
             return false;
         });

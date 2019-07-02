@@ -6,3 +6,4 @@ application/database.php
 /runtime/*
 runtime/*
 /runtime/
+/nbproject/

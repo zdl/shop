@@ -8,13 +8,19 @@ use think\Request;
 use app\model\Category as CategoryModel;
 
 class Category extends Controller {
-    
+
     //商品分类展示
     public function lists() {
+        $breadcrumb =[
+            ['name'=>'分类管理','url'=>'lists'],
+            ['name'=>'分类列表']
+        ];
         $model = new CategoryModel;
         //查询所有商品种类
-        $list = $model->categoryTree();
-        return view('lists', ['list' => $list]);
+        $list = $model->order('sort')->paginate(7);
+        $page = $list->render();
+
+        return view('lists', ['list' => $list, "page" => $page,"breadcrumb"=>$breadcrumb]);
     }
 
     //商品分类添加
@@ -28,24 +34,21 @@ class Category extends Controller {
         }
         //接收提交数据
         $postData = input('post.');
-        $res = Db::table('shop_category')->where(['name' => $postData['name']])->find();
-        if ($res) {
-            return $this->error('分类名称重复');
-        }
-        //插入数据
-        $res = Db::table('shop_category')->insert($postData);
-        if ($res) {
-            //跳转到展示
-            $this->success('分类添加成功', url('category/lists'));
+        $unique = Db::table('shop_category')->where(['name' => $postData['name']])->find();
+        if ($unique)
+            $this->error('分类名称已经存在！');
+        $insert = Db::table('shop_category')->insert($postData);
+        //插入数据1是成功 0是失败
+        if ($insert) {
+            $this->success('分类添加成功');
         } else {
-            //失败跳转
-            $this->error('添加失败！');
+            $this->error('分类添加失败！');
         }
     }
 
     //删除分类
     public function delCategory() {
-        $id = request()->get('id');
+        $id = request()->post('id');
         $res = Db::table('shop_category')->where(['parent' => $id])->find();
         //有子分类不允许删除
         if ($res) {
@@ -53,39 +56,65 @@ class Category extends Controller {
         }
         $res = Db::table('shop_category')->delete(['id' => $id]);
         if ($res) {
-            $this->success('分类删除成功', url('category/showcategory'));
+            $this->success('分类删除成功');
         } else {
             $this->error('删除失败！');
         }
     }
 
+    //修改分类是否开启显示
+    public function updateStatus() {
+
+        $id = input('id');
+        $status = request()->post('status');
+
+        $res = Db::table('shop_category')->where('id', $id)->update(["status" => $status]);
+
+        if ($res) {
+            $this->success('状态修改成功!');
+        } else {
+            $this->error('状态修改失败');
+        }
+    }
+
+    //修改分类是否开启显示
+    public function updateShow() {
+
+        $id = input('id');
+        $is_show = request()->post('is_show');
+
+        $res = Db::table('shop_category')->where('id', $id)->update(["is_show" => $is_show]);
+
+        if ($res) {
+            $this->success('显示属性修改成功!');
+        } else {
+            $this->error('显示属性修改失败');
+        }
+    }
     //修改分类
     public function updateCategory() {
 
         $id = input('id');
+
         //判断访问方式
         if ($id) {
             //查询所有商品种类
             $category = Db::table('shop_category')->where(['id' => $id])->find();
-            $parent = array();
-            if ($category['parent'] != 0) {
-                //查询所有商品种类
-                $parent = Db::table('shop_category')->where(['parent' => 0])->select();
-            }
+
             $this->view->engine->layout('layouts/easy');
-            return view('updatecategory', ['list' => $category, 'parent' => $parent]);
+            return view('updatecategory', ['category' => $category]);
         }
 
         $postData = request()->post();
         //dump($postData);die;
-        $res = Db::table('shop_category')->where('id',$postData['id'])->update($postData);
+        $res = Db::table('shop_category')->where('id', $postData['id'])->update($postData);
         // $res = $cate->save($data,['cat_id'=>$data['cat_id']]);
         if ($res) {
             // $this->success('分类修改成功!', url('category/updatecategory'));
         } else {
             $this->error('分类修改失败');
         }
-         
+
         // $cate = new CategoryModel;
         // if(request()->isPost()){
         //     $data = input('post.');
@@ -105,7 +134,6 @@ class Category extends Controller {
         //     'cateres'=>$cateres,
         //     'cates'=>$cates
         // ));
-
         // $this->view->engine->layout('layouts/easy');
         // return $this->fetch('updatecategory');
     }

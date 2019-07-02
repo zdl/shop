@@ -1,17 +1,8 @@
 <form class="layui-form" action="{:url('category/addcategory')}" method="post">
     <div class="layui-form-item">
-        <label class="layui-form-label">选择框</label>
-        <div class="layui-input-block">
-            <select name="parent" lay-verify="required">
-                <option value="0">顶级分类</option>
-                    
-            </select>
-        </div>
-    </div>
-    <div class="layui-form-item">
         <label class="layui-form-label">分类名称</label>
         <div class="layui-input-block">
-            <input type="text" name="name" value="" required  lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+            <input type="text" name="name" value="{$category.name}" required  lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
@@ -29,7 +20,24 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
+              //监听提交
+        form.on('submit(formDemo)', function(data){
+            console.log(data.field.name);
+            $.post("addCategory", { name: data.field.name, parent: data.field.parent },function(result){
+//                     console.log(result);
+//                     console.log(result.code);
+
+                      if(result.code){
+                        layer.alert("增加成功", {icon: 6}, function () {
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                        });
+                      }else{
+                          layer.alert(result.msg)
+                      }
+            });
             return false;
         });
     });
