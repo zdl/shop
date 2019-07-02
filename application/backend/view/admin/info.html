@@ -1,14 +1,14 @@
 <div class="x-body">
     <form class="layui-form">
         <div class="layui-form-item">
-            <label for="username" class="layui-form-label">
+            <label for="name" class="layui-form-label">
                 <span class="x-red">*</span>登录名
             </label>
-            <input id="user_id" name="user_id" value="{$user['user_id']??''}" type="hidden">
+            <input id="id" name="id" value="{$admin['id']??''}" type="hidden">
             <div class="layui-input-inline">
-                <input type="text" id="username" name="user_name" required="" lay-verify="required"
+                <input type="text" id="name" name="name" required="" lay-verify="required"
                        autocomplete="off" class="layui-input" 
-                       value="{$user['user_name']??''}">
+                       value="{$admin['name']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>将会成为您唯一的登入名
@@ -20,7 +20,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="phone" name="phone" required="" lay-verify="phone"
-                       autocomplete="off" class="layui-input" value="{$user['phone']??''}">
+                       autocomplete="off" class="layui-input" value="{$admin['phone']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>将会成为您唯一的登入名
@@ -32,7 +32,7 @@
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="L_email" name="email" required="" lay-verify="email"
-                       autocomplete="off" class="layui-input" value="{$user['email']??''}">
+                       autocomplete="off" class="layui-input" value="{$admin['email']??''}">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 <span class="x-red">*</span>
@@ -41,9 +41,10 @@
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="x-red">*</span>角色</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">
-                <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">
+                {volist name='roles' id='r'}
+                <input type="radio" name="role" lay-skin="primary" value="{$r.id}" title="{$r.role_name}"
+                       {$admin['role_id'] == $r['id']? 'checked':''}>
+                {/volist}
             </div>
         </div>
         <div class="layui-form-item">
@@ -51,7 +52,7 @@
                 <span class="x-red">*</span>密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="L_pass" name="user_password" required="" lay-verify="pass"
+                <input type="password" id="L_pass" name="pass" required="" lay-verify="pass"
                        autocomplete="off" class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
@@ -95,15 +96,16 @@
                     return '两次密码不一致';
                 }
             }
+
         });
 
         //监听提交
         form.on('submit(add)', function (data) {
-            console.log(data);
+
             $.post("/admin.php/admin/store", 
-            { user_name:data.field.user_name, user_id: data.field.user_id,phone:data.field.phone,email:data.field.email,pass:data.field.pass },
+            { name:data.field.name, id: data.field.id,phone:data.field.phone,email:data.field.email,pass:data.field.pass,role:data.field.role },
             function(result){
-                
+
                 layer.alert(result.msg, {icon: 6}, function () {
                     //刷新父页面
                     parent.location.reload();

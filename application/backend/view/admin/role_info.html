@@ -3,7 +3,7 @@
         <div class="layui-form-item">
             <input id="id" name="id" value="{$role['id']??''}" type="hidden">
             <label for="name" class="layui-form-label">
-                <span class="x-red">*</span>权限名称
+                <span class="x-red">*</span>角色名称
             </label>
             <div class="layui-input-inline">
                 <input type="text" id="name" name="role_name" required="" lay-verify="required"
@@ -11,7 +11,16 @@
                        value="{$role['role_name']??''}">
             </div>
         </div>
-        
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="x-red">*</span>分配权限</label>
+            <div class="layui-input-block">
+                {volist name='nodes' id='n'}
+
+                <input type="checkbox" name="node" lay-skin="primary" value="{$n.id}" title="{$n.name}"
+                       {if condition="in_array($n['id'],$role_nodes) "} checked{/if}>
+                       {/volist}
+            </div>
+        </div>
         <div class="layui-form-item layui-form-text">
             <label for="desc" class="layui-form-label">
                 描述
@@ -48,21 +57,27 @@
 
         //监听提交
         form.on('submit(add)', function (data) {
-            console.log(data);
-            $.post("/admin.php/admin/roleStore", 
-            { role_name:data.field.role_name, id:data.field.id, desc:data.field.desc },
-            function(result){
-                
-                layer.alert(result.msg, {icon: 6}, function () {
-                    //刷新父页面
-                    parent.location.reload();
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name);
-                    //关闭当前frame
-                    parent.layer.close(index);
-                });
- 
+
+            var chk_value = "";//定义一个数组    
+            $('input[name="node"]:checked').each(function () {
+                chk_value += $(this).val() + ",";  
             });
+            console.log(chk_value);
+            $.post("/admin.php/admin/roleStore",
+                    {role_name: data.field.role_name, id: data.field.id, desc: data.field.desc,node:chk_value},
+                    function (result) {
+//                        console.log(result);
+//                        return;
+                        layer.alert(result.msg, {icon: 6}, function () {
+                            //刷新父页面
+                            parent.location.reload();
+                            // 获得frame索引
+                            var index = parent.layer.getFrameIndex(window.name);
+                            //关闭当前frame
+                            parent.layer.close(index);
+                        });
+
+                    });
             return false;
         });
 

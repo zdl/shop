@@ -5,7 +5,7 @@ namespace app\backend\controller;
 use app\common\Backend;
 use think\Db;
 use think\Request;
-use app\model\User as UserModel;
+use app\model\Admin as AdminModel;
 use app\model\Roles as RolesModel;
 use app\model\Nodes as NodesModel;
 
@@ -19,15 +19,19 @@ class Admin extends Backend {
 
     //管理员列表
     public function index() {
-        $breadcrumb =[
-            ['name'=>'会员管理','url'=>'index'],
-            ['name'=>'会员列表']
+        $breadcrumb = [
+                ['name' => '会员管理', 'url' => 'index'],
+                ['name' => '会员列表']
         ];
         //查询会员列表
-        $user = new UserModel;
-        $list = $user->paginate(7);
+        $admin = new AdminModel;
+        $list = $admin->join('shop_user_role sur', 'sur.user_id = shop_admin.id', "left")
+                ->join('shop_roles sr', 'sr.id = sur.role_id', "left")
+                ->field('shop_admin.*,sr.role_name')
+                ->paginate(7);
+
         $page = $list->render();
-        $count = Db::table("shop_user")->count();
+        $count = Db::table("shop_admin")->count();
 
         $this->assign('list', $list);
         $this->assign('page', $page);
@@ -37,45 +41,69 @@ class Admin extends Backend {
     }
 
     //增加修改用户
-    public function info(){
-        if(!empty(input('user_id'))){
-            $user_id = input('user_id');
-            $user = Db::table("shop_user")->find($user_id);
-            $this->assign('user', $user);
+    public function info() {
+        if (!empty(input('id'))) {
+            $id = input('id');
+            $admin = Db::table("shop_admin")
+                    ->join('shop_user_role sur', 'sur.user_id = shop_admin.id', "left")
+                    ->field('shop_admin.*,sur.role_id')
+                    ->where("shop_admin.id", $id)
+                    ->find();
+
+            $this->assign('admin', $admin);
         }
+        $roles = Db::table("shop_roles")->select();
+
+        $this->assign('roles', $roles);
         $this->view->engine->layout('layouts/easy');
         return $this->fetch('info');
     }
+
     //增加修改用户方法
     public function store() {
-        $user_id = input('user_id');
-        if(!empty(input('user_id'))){
-             $user = User::get($user_id);
-             $str = "修改";
-        }else{
-            $user = new User;
-            $str = "添加";
-            $user->created_at = date("Y-m-d H:i:s");
-        }
+        Db::startTrans();
+        try {
+            $id = input('id');
+            if (!empty(input('id'))) {
+                $admin = AdminModel::get($id);
+                $str = "修改";
+            } else {
+                $admin = new AdminModel;
+                $str = "添加";
+                $admin->created_at = date("Y-m-d H:i:s");
+            }
 
-        $user->user_name = input('user_name');
-        $user->phone = input('phone');
-        $user->email = input('email');
-        $user->user_password = password_hash(input('pass'), PASSWORD_DEFAULT);
-        $save = $user->save();
+            $admin->name = input('name');
+            $admin->phone = input('phone');
+            $admin->email = input('email');
+            $admin->loginip = "127.0.0.1";
+            $admin->password = AdminModel::Encryption(input('pass'));
+            $save = $admin->save();
+            $userId = input('id') > 0 ? input('id') : Db::name('shop_admin')->getLastInsID();
+            $data = [
+                "role_id" => input('role'),
+                "user_id" => $userId
+            ];
 
-        if ($save) {
+            Db::table('shop_user_role')->where('user_id', $id)->delete();
+            Db::table('shop_user_role')->insert($data);
+
+            // 提交事务
+            Db::commit();
             $this->success("用户 $str 成功！");
-        } else {
+        } catch (\Exception $e) {
+
+            // 回滚事务
+            Db::rollback();
+            throw $e;
             $this->error("用户 $str 失败！");
         }
-        
     }
 
     //删除用户
     public function del() {
-        $user_id = request()->post('user_id');
-        $res = Db::table('shop_user')->delete(['user_id' => $user_id]);
+        $id = request()->post('id');
+        $res = Db::table('shop_admin')->delete(['id' => $id]);
         if ($res) {
             $this->success('用户删除成功');
         } else {
@@ -85,9 +113,9 @@ class Admin extends Backend {
 
     //修改用户状态
     public function status() {
-        $user_id = input('user_id');
+        $id = input('id');
         $status = request()->post('status');
-        $res = Db::table('shop_user')->where('user_id', $user_id)->update(["status" => $status]);
+        $res = Db::table('shop_admin')->where('id', $id)->update(["status" => $status]);
 
         if ($res) {
             $this->success('状态修改成功!');
@@ -100,52 +128,89 @@ class Admin extends Backend {
 
     //角色列表
     public function role() {
-        $breadcrumb =[
-            ['name'=>'角色管理','url'=>'role'],
-            ['name'=>'角色列表']
+        $breadcrumb = [
+                ['name' => '角色管理', 'url' => 'role'],
+                ['name' => '角色列表']
         ];
         $role = new RolesModel;
         //查询角色列表
         $list = $role->paginate(7);
         $page = $list->render();
         $count = Db::table("shop_roles")->count();
-
+        if(!empty($list)){
+            foreach ($list as $k=>$ro) {
+                $list[$k]['nodes'] = Db::table("shop_role_node")
+                        ->join("shop_nodes sn","sn.id=shop_role_node.node_id","left")
+                        ->where("role_id",$ro['id'])
+                        ->column("sn.name");
+            }
+        }
+        
         $this->assign('list', $list);
         $this->assign('page', $page);
         $this->assign('count', $count);
         $this->assign('breadcrumb', $breadcrumb);
         return $this->fetch('role');
     }
-    
+
     //增加修改用户
-    public function roleInfo(){
-        if(!empty(input('id'))){
+    public function roleInfo() {
+        $role_nodes = [];
+        if (!empty(input('id'))) {
             $id = input('id');
             $role = Db::table("shop_roles")->find($id);
             $this->assign('role', $role);
+            //角色拥有的节点
+            $role_nodes = Db::table("shop_role_node")->where("role_id", $id)->column('node_id');
         }
+
+        $this->assign('role_nodes', $role_nodes);
+        $nodes = Db::table("shop_nodes")->select();
+        $this->assign('nodes', $nodes);
         $this->view->engine->layout('layouts/easy');
         return $this->fetch('role_info');
     }
+
     //增加编辑角色
     public function roleStore() {
-        $id = input('id');
-        if(!empty(input('id'))){
-             $role = RolesModel::get($id);
-             $str = "修改";
-        }else{
-            $role = new RolesModel;
-            $str = "添加";
-            $role->created_at = date("Y-m-d H:i:s");
-        }
 
-        $role->role_name = input('role_name');
-        $role->description = input('desc');
-        $save = $role->save();
+        Db::startTrans();
+        try {
+            $id = input('id');
+            if (!empty(input('id'))) {
+                $role = RolesModel::get($id);
+                $str = "修改";
+            } else {
+                $role = new RolesModel;
+                $str = "添加";
+                $role->created_at = date("Y-m-d H:i:s");
+            }
 
-        if ($save) {
+            $role->role_name = input('role_name');
+            $role->description = input('desc');
+            $save = $role->save();
+
+            $role_id = input('id') > 0 ? input('id') : Db::name('shop_roles')->getLastInsID();
+            $node = explode(",",trim(input('node'),","));
+            $data = [];
+
+            if(!empty($node)){
+                foreach ($node as $n){
+                    $data[] = ["role_id"=>$role_id,"node_id"=>$n];
+                }
+            }
+            Db::table('shop_role_node')->where('role_id', $id)->delete();
+
+            Db::table('shop_role_node')->insertAll($data);
+
+            // 提交事务
+            Db::commit();
             $this->success("角色 $str 成功！");
-        } else {
+        } catch (\Exception $e) {
+
+            // 回滚事务
+            Db::rollback();
+            throw $e;
             $this->error("角色 $str 失败！");
         }
     }
@@ -178,9 +243,9 @@ class Admin extends Backend {
 
     //节点列表
     public function node() {
-        $breadcrumb =[
-            ['name'=>'节点管理','url'=>'node'],
-            ['name'=>'节点列表']
+        $breadcrumb = [
+                ['name' => '节点管理', 'url' => 'node'],
+                ['name' => '节点列表']
         ];
         $node = new NodesModel;
         //查询角色列表
@@ -198,7 +263,7 @@ class Admin extends Backend {
 
     //增加节点
     public function nodeInfo() {
-         if(!empty(input('id'))){
+        if (!empty(input('id'))) {
             $id = input('id');
             $node = Db::table("shop_nodes")->find($id);
             $this->assign('node', $node);
@@ -210,10 +275,10 @@ class Admin extends Backend {
     //编辑节点
     public function nodeStore() {
         $id = input('id');
-        if(!empty(input('id'))){
-             $node = NodesModel::get($id);
-             $str = "修改";
-        }else{
+        if (!empty(input('id'))) {
+            $node = NodesModel::get($id);
+            $str = "修改";
+        } else {
             $node = new NodesModel;
             $str = "添加";
         }

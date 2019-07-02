@@ -16,9 +16,9 @@
     <table class="layui-table">
         <thead>
             <tr>
-                <th>
+<!--                <th>
                     <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
-                </th>
+                </th>-->
                 <th>ID</th>
                 <th>角色名</th>
                 <th>拥有权限规则</th>
@@ -29,12 +29,12 @@
         <tbody>
             {volist name='list' id='role'}
             <tr>
-                <td>
+<!--                <td>
                     <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
-                </td>
+                </td>-->
                 <td>{$role.id}</td>
                 <td>{$role.role_name}</td>
-                <td>会员列表，问题列表</td>
+                <td>{volist name="$role['nodes']" id='rnodes'} {$rnodes}&nbsp; {/volist}</td>
                 <td>{$role.description}</td>
                 <td class="td-status">
                     {if condition="$role['status'] == 1"}

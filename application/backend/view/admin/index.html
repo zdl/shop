@@ -28,32 +28,32 @@
                 <th>操作</th>
         </thead>
         <tbody>
-            {volist name='list' id='user'}
+            {volist name='list' id='admin'}
             <tr>
                 <td>
                     <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
                 </td>
-                <td>{$user.user_id}</td>
-                <td>{$user.user_name}</td>
-                <td>{$user.phone}</td>
-                <td>{$user.email}</td>
-                <td>超级管理员</td>
-                <td>{$user.created_at}</td>
+                <td>{$admin.id}</td>
+                <td>{$admin.name}</td>
+                <td>{$admin.phone}</td>
+                <td>{$admin.email}</td>
+                <td>{$admin.role_name}</td>
+                <td>{$admin.created_at}</td>
                 <td class="td-status">
-                    {if condition="$user['status'] == 1"}
+                    {if condition="$admin['status'] == 1"}
                     <span class="layui-btn layui-btn-normal layui-btn-mini" 
-                          onclick="member_stop(this)" tag="{$user['user_id']}">已启用</span></td>
+                          onclick="member_stop(this)" tag="{$admin['id']}">已启用</span></td>
                     {else /}
-                    <span class="layui-btn layui-btn-danger" onclick="member_stop(this)" tag="{$user['user_id']}">已停用</span></td>
+                    <span class="layui-btn layui-btn-danger" onclick="member_stop(this)" tag="{$admin['id']}">已停用</span></td>
                     {/if}
         <td class="td-manage">
 
-            <a title="编辑"  onclick="x_admin_show('编辑', '{:url(\'admin/info\',array(\'user_id\'=>$user[\'user_id\']))}')" href="javascript:;">
+            <a title="编辑"  onclick="x_admin_show('编辑', '{:url(\'admin/info\',array(\'id\'=>$admin[\'id\']))}')" href="javascript:;">
                 <i class="layui-icon">&#xe642;</i>
             </a>
             
             
-            <a title="删除" onclick="member_del(this)"  tag="{$user['user_id']}" href="javascript:;">
+            <a title="删除" onclick="member_del(this)"  tag="{$admin['id']}" href="javascript:;">
                 <i class="layui-icon">&#xe640;</i>
             </a>
         </td>
@@ -86,10 +86,10 @@
     /*用户-停用*/
     function member_stop(obj) {
         layer.confirm('确认要修改状态吗？', function (index) {
-            var user_id = $(obj).attr("tag");
+            var id = $(obj).attr("tag");
 
             if ($(obj).html() == '已启用') {
-                $.post("status", {user_id: user_id, status: 0}, function (data) {
+                $.post("status", {id: id, status: 0}, function (data) {
                     //发异步把用户状态进行更改
                     if (data.code) {
                         $(obj).removeClass();
@@ -102,7 +102,7 @@
                     }
                 });
             } else {
-                $.post("status", {user_id: user_id, status: 1}, function (data) {
+                $.post("status", {id: id, status: 1}, function (data) {
                     //发异步把用户状态进行更改
                     if (data.code) {
                         $(obj).removeClass();
@@ -122,9 +122,9 @@
     /*用户-删除*/
     function member_del(obj, id) {
         layer.confirm('确认要删除吗？', function (index) {
-            var user_id = $(obj).attr("tag")
+            var id = $(obj).attr("tag")
             //发异步删除数据
-            $.post("del", { user_id :user_id },function(data){
+            $.post("del", { id :id },function(data){
                 if(data.code){
                   $(obj).parents("tr").remove();
                    layer.msg('已删除!', {icon: 1, time: 1000});

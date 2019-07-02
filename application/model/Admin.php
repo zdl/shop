@@ -24,7 +24,8 @@ class Admin extends Model {
     //通过用户名获取用户信息
     public static function ByNameGetInfo($name = false) {
         if (!empty($name)) {
-            return $data = Admin::where('status != 0')->getByName($name)->toArray();
+            $data = Admin::where('status != 0')->getByName($name);
+            return !empty($data) ? $data->toArray()      : false;
         } else {
             return false;
         }
@@ -41,7 +42,7 @@ class Admin extends Model {
     }
 
     //密码加密
-    public function Encryption($password = '') {
+    public static function Encryption($password = '') {
         $hash = password_hash($password, PASSWORD_DEFAULT);
         return $hash;
     }
