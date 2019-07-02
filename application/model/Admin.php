@@ -19,7 +19,7 @@ class Admin extends Model {
     //protected $table = 'admin';
     //
     //定义自动完成的时间戳的实际字段
-    protected $createTime = 'create_time';
+    protected $createTime = 'created_at';
 
     //通过用户名获取用户信息
     public static function ByNameGetInfo($name = false) {
